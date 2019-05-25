@@ -76,10 +76,12 @@ async def websocket(ws):
 
     while True:
         try:
-            data = await ws.receive()
+            message = await ws.receive()
 
-            if 'bytes' in data:
-                _content = data['bytes']
+            ws._raise_on_disconnect(message)
+
+            if 'bytes' in message:
+                _content = message['bytes']
 
                 filename = uuid.uuid4().hex
 
@@ -92,36 +94,43 @@ async def websocket(ws):
                     "output": "Upload successfully!"
                 })
                 continue
-            elif 'text' in data:
-                params = json.loads(data['text'])
+
+            
+            params = json.loads(message['text'])
+            class_names = ""
 
             rc, cmd, err = run_command('which jp2a')
 
             if rc != 0:
                 await ws.send_json({
                     'status': False,
-                    "output": "jp2a not found"
+                    "output": "jp2a not found",
+                    "class": class_names
                 })
             
             cmd = f"{cmd.strip()} {filename}.jpeg --width=80"
 
             if 'background' in params:
                 cmd = f'{cmd} --background=' + params["background"]
+                class_names += f' {params["background"]}'
 
             if 'width' in params:
                 cmd = f'{cmd} --width=' + params["width"]
+                class_names += f' width{params["width"]}'
 
             rc, out, err = run_command(cmd)
 
             if rc == 0:
                 await ws.send_json({
                     'status': True,
-                    "output": out.strip()
+                    "output": out.strip(),
+                    "class": class_names
                 })
             else:
                 await ws.send_json({
                     'status': True,
-                    "output": out.strip() + err.strip()
+                    "output": out.strip() + err.strip(),
+                    "class": class_names
                 })
         except WebSocketDisconnect as e:
             break

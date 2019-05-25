@@ -9,6 +9,7 @@
     <meta name="author" content="Jackey Gao (JG)">
     <title>{% block title %}{% endblock %}</title>
     <link href="https://unpkg.com/nes.css@2.1.0/css/nes.min.css" rel="stylesheet" />
+    <link href="https://unpkg.com/dialog-polyfill@0.4.7/dialog-polyfill.css" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" class="ui" href="/static/container.min.css">
     <link rel="stylesheet" type="text/css" class="ui" href="/static/web.css">
@@ -21,21 +22,73 @@
     <meta name="theme-color" content="#ffffff">
     {% block header %}
     {% endblock %}
+    <style>
+    .hidden {
+      display: none;
+    }
+    .nes-octocat::before {
+        color: #f77702;
+    }
+     @keyframes wave {
+  50% {
+    width: 6px;
+    height: 6px;
+    color: #f77702;
+    box-shadow: 24px 6px,78px 6px,24px 12px,30px 12px,72px 12px,78px 12px,24px 18px,30px 18px,36px 18px,42px 18px,48px 18px,54px 18px,60px 18px,66px 18px,72px 18px,78px 18px,18px 24px,24px 24px,30px 24px,36px 24px,42px 24px,48px 24px,54px 24px,60px 24px,66px 24px,72px 24px,78px 24px,84px 24px,18px 30px,24px 30px,30px 30px,36px 30px,42px 30px,48px 30px,54px 30px,60px 30px,66px 30px,72px 30px,78px 30px,84px 30px,18px 36px,24px 36px,30px 36px,36px 36px#ffdec4,42px 36px#ffdec4,48px 36px#ffdec4,54px 36px#ffdec4,60px 36px#ffdec4,66px 36px#ffdec4,72px 36px,78px 36px,84px 36px,18px 42px,24px 42px,30px 42px#ffdec4,36px 42px#ffdec4,42px 42px#ffdec4,48px 42px#ffdec4,54px 42px#ffdec4,60px 42px#ffdec4,66px 42px#ffdec4,72px 42px#ffdec4,78px 42px,84px 42px,12px 48px,18px 48px,24px 48px,30px 48px#ffdec4,36px 48px#cb7066,42px 48px#ffdec4,48px 48px#ffdec4,54px 48px#ffdec4,60px 48px#ffdec4,66px 48px#cb7066,72px 48px#ffdec4,78px 48px,84px 48px,12px 54px,24px 54px,30px 54px,36px 54px#ffdec4,42px 54px#ffdec4,48px 54px#cb7066,54px 54px#cb7066,60px 54px#ffdec4,66px 54px#ffdec4,72px 54px,78px 54px,18px 60px,42px 60px,48px 60px,54px 60px,60px 60px,24px 66px,36px 66px,42px 66px,48px 66px,54px 66px,60px 66px,66px 66px,24px 72px,30px 72px,36px 72px,42px 72px,48px 72px,54px 72px,60px 72px,66px 72px,36px 78px,48px 78px,54px 78px,66px 78px,36px 84px,48px 84px,54px 84px,66px 84px,30px 90px,42px 90px,60px 90px,72px 90px;
+    @-moz-document url-prefix() {
+      -webkit-box-shadow: 24px 6px0 0.020px,78px 6px0 0.020px,24px 12px0 0.020px,30px 12px0 0.020px,72px 12px0 0.020px,78px 12px0 0.020px,24px 18px0 0.020px,30px 18px0 0.020px,36px 18px0 0.020px,42px 18px0 0.020px,48px 18px0 0.020px,54px 18px0 0.020px,60px 18px0 0.020px,66px 18px0 0.020px,72px 18px0 0.020px,78px 18px0 0.020px,18px 24px0 0.020px,24px 24px0 0.020px,30px 24px0 0.020px,36px 24px0 0.020px,42px 24px0 0.020px,48px 24px0 0.020px,54px 24px0 0.020px,60px 24px0 0.020px,66px 24px0 0.020px,72px 24px0 0.020px,78px 24px0 0.020px,84px 24px0 0.020px,18px 30px0 0.020px,24px 30px0 0.020px,30px 30px0 0.020px,36px 30px0 0.020px,42px 30px0 0.020px,48px 30px0 0.020px,54px 30px0 0.020px,60px 30px0 0.020px,66px 30px0 0.020px,72px 30px0 0.020px,78px 30px0 0.020px,84px 30px0 0.020px,18px 36px0 0.020px,24px 36px0 0.020px,30px 36px0 0.020px,36px 36px0 0.020px #ffdec4,42px 36px0 0.020px #ffdec4,48px 36px0 0.020px #ffdec4,54px 36px0 0.020px #ffdec4,60px 36px0 0.020px #ffdec4,66px 36px0 0.020px #ffdec4,72px 36px0 0.020px,78px 36px0 0.020px,84px 36px0 0.020px,18px 42px0 0.020px,24px 42px0 0.020px,30px 42px0 0.020px #ffdec4,36px 42px0 0.020px #ffdec4,42px 42px0 0.020px #ffdec4,48px 42px0 0.020px #ffdec4,54px 42px0 0.020px #ffdec4,60px 42px0 0.020px #ffdec4,66px 42px0 0.020px #ffdec4,72px 42px0 0.020px #ffdec4,78px 42px0 0.020px,84px 42px0 0.020px,12px 48px0 0.020px,18px 48px0 0.020px,24px 48px0 0.020px,30px 48px0 0.020px #ffdec4,36px 48px0 0.020px #cb7066,42px 48px0 0.020px #ffdec4,48px 48px0 0.020px #ffdec4,54px 48px0 0.020px #ffdec4,60px 48px0 0.020px #ffdec4,66px 48px0 0.020px #cb7066,72px 48px0 0.020px #ffdec4,78px 48px0 0.020px,84px 48px0 0.020px,12px 54px0 0.020px,24px 54px0 0.020px,30px 54px0 0.020px,36px 54px0 0.020px #ffdec4,42px 54px0 0.020px #ffdec4,48px 54px0 0.020px #cb7066,54px 54px0 0.020px #cb7066,60px 54px0 0.020px #ffdec4,66px 54px0 0.020px #ffdec4,72px 54px0 0.020px,78px 54px0 0.020px,18px 60px0 0.020px,42px 60px0 0.020px,48px 60px0 0.020px,54px 60px0 0.020px,60px 60px0 0.020px,24px 66px0 0.020px,36px 66px0 0.020px,42px 66px0 0.020px,48px 66px0 0.020px,54px 66px0 0.020px,60px 66px0 0.020px,66px 66px0 0.020px,24px 72px0 0.020px,30px 72px0 0.020px,36px 72px0 0.020px,42px 72px0 0.020px,48px 72px0 0.020px,54px 72px0 0.020px,60px 72px0 0.020px,66px 72px0 0.020px,36px 78px0 0.020px,48px 78px0 0.020px,54px 78px0 0.020px,66px 78px0 0.020px,36px 84px0 0.020px,48px 84px0 0.020px,54px 84px0 0.020px,66px 84px0 0.020px,30px 90px0 0.020px,42px 90px0 0.020px,60px 90px0 0.020px,72px 90px0 0.020px;
+    }
+  }
+}
+    .github-link {
+  justify-content: center;
+  display: flex;
+  height: 100px;
+  color: #333;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.github-link.active {
+  right: 10px;
+}
+.github-link:hover {
+  text-decoration: none;
+}
+.github-link > p.nes-balloon {
+  align-self: flex-start;
+  padding: 0.2rem 0.5rem;
+  font-size: 0.8rem;
+  color: #333;
+}
+.github-link > i.nes-octocat {
+  align-self: flex-end;
+}
+
+    </style>
   </head>
   <body>
     <div class="ui container">
       {% block content %}
       {% endblock %}
-    </div>
 
-    <a href="https://github.com/jackeyGao/request-meta" class="github-corner" aria-label="View source on GitHub">
-      <svg width="80" height="80" viewBox="0 0 250 250" style="fill:#151513; color:#fff; position: absolute; top: 0; border: 0; right: 0;" aria-hidden="true">
-        <path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path>
-        <path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path>
-        <path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path>
-      </svg>
-    </a>
+        
+      <div class="nes-container is-dark" style="margin-top: 30px;">
+      <a href="https://github.com/jackeyGao/j2a" target="_blank" rel="noopener" class="github-link active"><p class="nes-balloon from-right">Fork me<br>on GitHub</p> <i class="nes-octocat animate"></i></a>
+</div>
+    </div>
   </body>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://unpkg.com/jquery@2.2.4/dist/jquery.min.js"></script>
+  <script src="https://unpkg.com/dialog-polyfill@0.4.7/dialog-polyfill.js"></script>
   {% block footer %} {% endblock %}
+  <script>
+    document.addEventListener('scroll', () => {
+      var scrollPos = document.documentElement.scrollTop || document.body.scrollTop;
+      
+      if (scrollPos > 200) {
+        $('.github-link').addClass('hidden');
+      } else {
+        $('.github-link').removeClass('hidden');
+      }
+    });
+  </script>
 </html>

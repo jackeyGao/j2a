@@ -18,9 +18,11 @@
       margin-bottom: 8px;
     }
 
-    .hidden {
-      display: none;
+    menu.dialog-menu {
+      padding-left: 0px;
+      text-align: center;
     }
+
 
     .removefile {
       z-index: 100;
@@ -28,7 +30,8 @@
 
     label.header {
       color: #ffe837;
-      width: 200px;
+      max-width: 250px;
+      width: 40%;
       text-align: right;
       padding-right: 16px;
     }
@@ -37,11 +40,25 @@
       max-width: 100%;
       padding: 16px;
       border-radius: 5px;
-      background-color: #4e4e4e;
-      color: #fff;
-      border: 1px solid #4e4e4e;
-      font-size: 12px;
+      color: #404040;
+      font-size: 16px;
       overflow: auto;
+    }
+
+    #output.light {
+      color: #404040;
+    }
+    
+    #output.dark {
+      color: #fff;
+    }
+
+    #output.width80 {
+        font-size: 12px;
+    }
+
+    #output.width60 {
+        font-size: 14px;
     }
 
     @media only screen and (max-width: 767px) {
@@ -56,7 +73,11 @@
       }
 
       label.header {
-        width: 120px;
+        padding-right: 8px;
+      }
+
+      #output {
+        font-size: 12px!important;
       }
     }
 </style>
@@ -73,15 +94,17 @@
     <i class="nes-charmander"></i>
     <i class="nes-squirtle"></i>
     <i class="nes-kirby"></i>
-    <i class="nes-octocat animate"></i>
+    <!--
+    <a href="https://github.com/jackeyGao/j2a"><i class="nes-octocat animate"></i></a>
+    -->
 </section>
 
-<div class="nes-container with-title">
+<div class="nes-container is-rounded with-title" style="padding: 16px 8px;">
   <p class="title">Form</p>
   <div class="ui form">
     <div class="field">
       <label for="jpg" class="header">JPEG</label>
-      <button id="uploadJPEGHandle" class="nes-btn" style="margin-right: 16px;">
+      <button id="uploadJPEGHandle" class="nes-btn" style="margin-right: 16px; margin-left: 10px;">
           Choose
       </button>
       <input id="jpg" name="jpg" type="file" style="display: none">
@@ -121,13 +144,28 @@
         <span class="process">Process</span>
     </button>
     <button id="copy-button" type="button" class="nes-btn is-success">Copy</button>
+    
+    <dialog class="nes-dialog is-dark" id="dialog-copy">
+      <form method="dialog">
+        <p class="title">
+          <a href="#" class="nes-badge">
+            <span class="is-warning"><i class="nes-icon coin" style="width: 0; height: 0; transform: scale(1);"></i> + 10000</span>
+          </a>
+        </p>
+        <p>Copy successfully.</p>
+        <menu class="dialog-menu">
+          <button class="nes-btn is-primary">Close</button>
+        </menu>
+      </form>
+    </dialog>
   </div>
  
 </div>
 
-<div class="nes-container with-title" style="margin-top: 30px; text-align: center;">
+<div id="output-wrapper" class="nes-container is-rounded with-title" style="margin-top: 30px; text-align: center;">
   <p class="title">Output</p>
-  <div id="output"></div>
+  <pre id="output">:) Hello, Please choose and upload an image(*jpeg).</pre>
+  <textarea class="hidden" type="text" id="copy-result"></textarea>
 </div>
 
 {% endblock %}
@@ -145,9 +183,15 @@ ws.onmessage = function(event) {
       $('#upload-button').removeClass('is-disabled');
       $('#upload-button').addClass('is-primary');
     }
-    
+
     $('#upload-button .process').html("Process")
     $('#output').html(data.output);
+    $('#copy-result').val(data.output);
+    var classNames = data.class || '';
+    $('#output').attr('class', classNames);
+
+    classNames = classNames.replace('dark', 'is-dark');
+    $('#output-wrapper').attr('class', "nes-container is-rounded with-title " + classNames);
 };
 
 function sendMessage(event) {
@@ -157,11 +201,29 @@ function sendMessage(event) {
   ws.send(JSON.stringify({"background": bg, "width": width}))
 }
 
+
 $(document).ready(function() {
   $('#upload-button').on('click', function () {
     $('#upload-button .process').html("Processing..")
     sendMessage()
   })
+
+  $('#copy-button').on('click', function () {
+    let copyResultInput = document.querySelector('#copy-result')
+    copyResultInput.setAttribute('class', '')    // 不是 hidden 才能複製
+    copyResultInput.select()
+
+    try {
+      document.execCommand('copy');
+    } catch (err) {
+      console.log("copy error")
+    }
+    copyResultInput.setAttribute('class', 'hidden')
+    window.getSelection().removeAllRanges()
+
+    document.getElementById('dialog-copy').showModal()
+  })
+
 
   $('.removefile').on('click', function (e) {
     $('#uploadJPEGHandle').html('Choose')
