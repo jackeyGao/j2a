@@ -7,6 +7,10 @@
     .container {
       height: 100%;
     }
+    dialog {
+      box-sizing: content-box;
+    }
+
 
     button.is-disabled {
       pointer-events: none!important;
@@ -16,6 +20,7 @@
       display: flex;
       align-items: center;
       margin-bottom: 8px;
+      height: 52px;
     }
 
     menu.dialog-menu {
@@ -144,23 +149,21 @@
         <span class="process">Process</span>
     </button>
     <button id="copy-button" type="button" class="nes-btn is-success">Copy</button>
-    
-    <dialog class="nes-dialog is-dark" id="dialog-copy">
-      <form method="dialog">
-        <p class="title">
-          <a href="#" class="nes-badge">
-            <span class="is-warning"><i class="nes-icon coin" style="width: 0; height: 0; transform: scale(1);"></i> + 10000</span>
-          </a>
-        </p>
-        <p>Copy successfully.</p>
-        <menu class="dialog-menu">
-          <button class="nes-btn is-primary">Close</button>
-        </menu>
-      </form>
-    </dialog>
   </div>
  
 </div>
+
+<dialog class="nes-dialog is-dark" id="dialog-copy">
+  <form method="dialog">
+    <p class="title">
+      <a href="#" class="nes-badge">
+        <span class="is-warning"><i class="nes-icon coin" style="width: 0; height: 0; transform: scale(1);"></i> + 10000</span>
+      </a>
+    </p>
+    <p>Copy successfully.</p>
+    <button id="close" class="nes-btn is-primary">Close</button>
+  </form>
+</dialog>
 
 <div id="output-wrapper" class="nes-container is-rounded with-title" style="margin-top: 30px; text-align: center;">
   <p class="title">Output</p>
@@ -203,6 +206,10 @@ function sendMessage(event) {
 
 
 $(document).ready(function() {
+  // Initalize dialog
+  var dialog = document.querySelector('#dialog-copy');
+  dialogPolyfill.registerDialog(dialog);
+
   $('#upload-button').on('click', function () {
     $('#upload-button .process').html("Processing..")
     sendMessage()
@@ -221,7 +228,7 @@ $(document).ready(function() {
     copyResultInput.setAttribute('class', 'hidden')
     window.getSelection().removeAllRanges()
 
-    document.getElementById('dialog-copy').showModal()
+    dialog.showModal()
   })
 
 
