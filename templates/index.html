@@ -190,7 +190,6 @@ ws.onmessage = function(event) {
 
     $('#upload-button .process').html("Process")
     $('#output').html(data.output);
-    $('#copy-result').val(data.output);
     var classNames = data.class || '';
     $('#output').attr('class', classNames);
 
@@ -218,6 +217,7 @@ $(document).ready(function() {
 
   $('#copy-button').on('click', function () {
     let copyResultInput = document.querySelector('#copy-result')
+    $('#copy-result').val($('#output').html());
     copyResultInput.setAttribute('class', '')    // 不是 hidden 才能複製
     copyResultInput.select()
 
