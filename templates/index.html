@@ -176,7 +176,8 @@
 
 {% block footer %}
 <script>
-var ws = new WebSocket("ws://"+location.host+"/ws");
+var wsScheme = window.location.protocol == "https:" ? "wss" : "ws";
+var ws = new WebSocket(wsScheme + "://"+location.host+"/ws");
 
 ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
