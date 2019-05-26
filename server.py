@@ -127,7 +127,7 @@ async def websocket(ws):
             if rc == 0:
                 await ws.send_json({
                     'status': True,
-                    "output": out.strip(),
+                    "output": out,
                     "class": class_names
                 })
             else:

@@ -148,7 +148,7 @@
         <i class="nes-icon coin" style="width: 0; height: 0; transform: scale(1);"></i> 
         <span class="process">Process</span>
     </button>
-    <button id="copy-button" type="button" class="nes-btn is-success">Copy</button>
+    <button id="copy-button" type="button" class="nes-btn copy-btn is-success" data-clipboard-text="">Copy</button>
   </div>
  
 </div>
@@ -188,8 +188,12 @@ ws.onmessage = function(event) {
       $('#upload-button').addClass('is-primary');
     }
 
+    console.log(data)
+
     $('#upload-button .process').html("Process")
     $('#output').html(data.output);
+    $('#copy-result').val(data.output);
+    $('#copy-button').attr('data-clipboard-text', data.output);
     var classNames = data.class || '';
     $('#output').attr('class', classNames);
 
@@ -210,27 +214,33 @@ $(document).ready(function() {
   var dialog = document.querySelector('#dialog-copy');
   dialogPolyfill.registerDialog(dialog);
 
+  var clipboard = new ClipboardJS('.copy-btn');
+
+  clipboard.on('success', function(e) {
+    dialog.showModal()
+  });
+
+
   $('#upload-button').on('click', function () {
     $('#upload-button .process').html("Processing..")
     sendMessage()
   })
 
-  $('#copy-button').on('click', function () {
-    let copyResultInput = document.querySelector('#copy-result')
-    $('#copy-result').val($('#output').html());
-    copyResultInput.setAttribute('class', '')    // 不是 hidden 才能複製
-    copyResultInput.select()
+  // $('#copy-button').on('change', function () {
+  //   let copyResultInput = document.querySelector('#copy-result')
+  //   copyResultInput.setAttribute('class', '')    // 不是 hidden 才能複製
+  //   copyResultInput.select()
 
-    try {
-      document.execCommand('copy');
-    } catch (err) {
-      console.log("copy error")
-    }
-    copyResultInput.setAttribute('class', 'hidden')
-    window.getSelection().removeAllRanges()
+  //   try {
+  //     document.execCommand('copy');
+  //   } catch (err) {
+  //     console.log("copy error")
+  //   }
+  //   copyResultInput.setAttribute('class', 'hidden')
+  //   window.getSelection().removeAllRanges()
 
-    dialog.showModal()
-  })
+  //   dialog.showModal()
+  // })
 
 
   $('.removefile').on('click', function (e) {
