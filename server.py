@@ -13,6 +13,7 @@ from datetime import datetime
 
 api = responder.API()
 env = os.environ.get('PYENV', 'DEBUG')
+jp2a = os.environ.get('JP2A', None)
 
 __version__ = 'v0.0.1'
 __author__ = "JG (之及)"
@@ -99,14 +100,17 @@ async def websocket(ws):
             params = json.loads(message['text'])
             class_names = ""
 
-            rc, cmd, err = run_command('which jp2a')
+            if not jp2a:
+                rc, cmd, err = run_command('which jp2a') 
 
-            if rc != 0:
-                await ws.send_json({
-                    'status': False,
-                    "output": "jp2a not found",
-                    "class": class_names
-                })
+                if rc != 0:
+                    await ws.send_json({
+                        'status': False,
+                        "output": "jp2a not found",
+                        "class": class_names
+                    })
+            else:
+                cmd = jp2a
             
             cmd = f"{cmd.strip()} {filename}.jpeg --width=80"
 
