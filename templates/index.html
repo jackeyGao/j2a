@@ -295,9 +295,14 @@ $(document).ready(function() {
     $('.removefile').removeClass('hidden');
 
     // upload file 
-    $('#upload-button .process').html("Uploading..")
     var file = $('#jpg')[0].files[0];
+    if (file.size > 2000000) {
+        $('#output').html("File too large( >2m ).")
+        return 
+    }
+    $('#upload-button .process').html("Uploading..")
     ws.send(file)
+
   })
 
   $('#uploadJPEGHandle').on('click', function (e) {
