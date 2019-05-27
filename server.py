@@ -7,14 +7,16 @@ import subprocess
 import shlex
 import time
 import uuid
+from pathlib import Path
 from starlette.websockets import WebSocketDisconnect
 from uvicorn.config import get_logger
 from datetime import datetime
 
 
+
 api = responder.API()
 env = os.environ.get('PYENV', 'DEBUG')
-jp2a = os.environ.get('JP2A', None)
+jp2a_path = os.environ.get('JP2A', None)
 
 __version__ = 'v0.0.1'
 __author__ = "JG (之及)"
@@ -67,6 +69,58 @@ def run_command(command, timeout=10):
     return rc, toStr(stdout), toStr(process.stderr.read())
 
 
+def jp2a(filename, params):
+    class_names = ""
+    filename = params['filename'] or filename
+
+    if not jp2a_path:
+        rc, cmd, err = run_command('which jp2a') 
+
+        if rc != 0:
+            return {
+                'status': False,
+                "output": "jp2a not found",
+                "class": class_names
+            }
+    else:
+        cmd = jp2a_path
+    
+    cmd = f"{cmd.strip()} ./static/images/{filename}.jpeg --width=80"
+
+    if 'background' in params:
+        cmd = f'{cmd} --background=' + params["background"]
+        class_names += f' {params["background"]}'
+
+    if 'width' in params:
+        cmd = f'{cmd} --width=' + params["width"]
+        class_names += f' width{params["width"]}'
+
+    if 'colors' in params:
+        if params['colors'] == 'html':
+            cmd = f'{cmd} --colors --html'
+            class_names += f' colors'
+
+        if params['colors'] == 'ansi':
+            cmd = f'{cmd} --colors'
+            class_names += f' ansi'
+
+
+    rc, out, err = run_command(cmd)
+
+    if rc == 0:
+        return {
+            'status': True,
+            "output": content_process(out),
+            "class": class_names
+        }
+    else:
+       return { 
+            'status': True,
+            "output": out.strip() + err.strip(),
+            "class": class_names
+        }
+
+
 def __initalize_runserver__():
     if env == 'DEBUG':
         log_level = 'info'
@@ -78,12 +132,18 @@ def __initalize_runserver__():
     logger.debug('Running on debug')
     logger.info('Database is ready')
 
+
     api.run(address="0.0.0.0", debug=env=='DEBUG', logger=logger)
 
 
 @api.route('/')
 async def index(req, resp):
     resp.html = api.template('index.html')
+
+
+@api.route('/{filename}')
+async def share(req, resp, *, filename):
+    resp.html = api.template('index.html', **locals())
 
 
 @api.route('/ws', websocket=True)
@@ -103,8 +163,10 @@ async def websocket(ws):
                 
                 filename = hashlib.md5(_content).hexdigest()
 
-                with open(f'{filename}.jpeg', 'wb') as f:
+                with open(f'./static/images/{filename}.jpeg', 'wb') as f:
                     f.write(_content)
+
+                api.whitenoise.add_files(str(api.static_dir))
                 
                 await ws.send_json({
                     'type': 'upload',
@@ -117,53 +179,9 @@ async def websocket(ws):
             params = json.loads(message['text'])
             class_names = ""
             filename = params['filename'] or filename
+            jp2a_resp = jp2a(filename, params)
 
-            if not jp2a:
-                rc, cmd, err = run_command('which jp2a') 
-
-                if rc != 0:
-                    await ws.send_json({
-                        'status': False,
-                        "output": "jp2a not found",
-                        "class": class_names
-                    })
-            else:
-                cmd = jp2a
-            
-            cmd = f"{cmd.strip()} {filename}.jpeg --width=80"
-
-            if 'background' in params:
-                cmd = f'{cmd} --background=' + params["background"]
-                class_names += f' {params["background"]}'
-
-            if 'width' in params:
-                cmd = f'{cmd} --width=' + params["width"]
-                class_names += f' width{params["width"]}'
-
-            if 'colors' in params:
-                if params['colors'] == 'html':
-                    cmd = f'{cmd} --colors --html'
-                    class_names += f' colors'
-
-                if params['colors'] == 'ansi':
-                    cmd = f'{cmd} --colors'
-                    class_names += f' ansi'
-
-
-            rc, out, err = run_command(cmd)
-
-            if rc == 0:
-                await ws.send_json({
-                    'status': True,
-                    "output": content_process(out),
-                    "class": class_names
-                })
-            else:
-                await ws.send_json({
-                    'status': True,
-                    "output": out.strip() + err.strip(),
-                    "class": class_names
-                })
+            await ws.send_json(jp2a_resp)
         except WebSocketDisconnect as e:
             break
 
