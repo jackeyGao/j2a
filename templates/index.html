@@ -11,6 +11,17 @@
       box-sizing: content-box;
     }
 
+    .nes-radio {
+        display: none;
+        -webkit-appearance: radio!important;
+        -moz-appearance: ratio!important;
+        appearance: ratio!important;
+    }
+
+    .field label span {
+        margin-left: 25px;
+    }
+
 
     button.is-disabled {
       pointer-events: none!important;
@@ -34,7 +45,7 @@
     }
 
     label.header {
-      color: #ffe837;
+      color: #f77702;
       max-width: 250px;
       width: 40%;
       text-align: right;
@@ -48,6 +59,7 @@
       color: #404040;
       font-size: 16px;
       overflow: auto;
+      line-height: 1.8;
     }
 
     #output.light {
@@ -81,7 +93,13 @@
         padding-right: 8px;
       }
 
+      #output-wrapper {
+        padding-left: 0px!important;
+        padding-right: 0px!important;
+      }
+
       #output {
+        padding: 0px;
         font-size: 12px!important;
       }
     }
@@ -118,12 +136,27 @@
     <div class="field">
       <label class="header">Background</label>
       <label>
-        <input type="radio" class="bg nes-radio" name="bg" value="dark" checked />
+        <input style="margin-left: -16px;" type="radio" class="bg nes-radio" name="bg" value="dark" checked />
         <span>Dark</span>
       </label>
       <label>
         <input type="radio" class="bg nes-radio" name="bg" value="light" />
         <span>Light</span>
+      </label>
+    </div>
+    <div class="field">
+      <label class="header">Colors</label>
+      <label>
+        <input type="radio" class="colors nes-radio" name="colors" value="html" checked />
+        <span>HTML</span>
+      </label>
+      <label>
+        <input type="radio" class="colors nes-radio" name="colors" value="ansi" />
+        <span>ANSI</span>
+      </label>
+      <label>
+        <input type="radio" class="colors nes-radio" name="colors" value="no"/>
+        <span>No</span>
       </label>
     </div>
     <div class="field">
@@ -190,11 +223,24 @@ ws.onmessage = function(event) {
 
     console.log(data)
 
-    $('#upload-button .process').html("Process")
-    $('#output').html(data.output);
-    $('#copy-result').val(data.output);
-    $('#copy-button').attr('data-clipboard-text', data.output);
+    var ansi_up = new AnsiUp;
     var classNames = data.class || '';
+    var output = data.output
+    var outputText = data.output
+
+    if (classNames.includes('ansi')) {
+        output = ansi_up.ansi_to_html(data.output)
+    } 
+
+    if (classNames.includes('html')) {
+        outputText = $(output.replace(/\<br\>/g, '\n')).text()
+    }
+
+    $('#upload-button .process').html("Process")
+    $('#output').html(output);
+    $('#copy-result').val(output);
+
+    $('#copy-button').attr('data-clipboard-text', outputText);
     $('#output').attr('class', classNames);
 
     classNames = classNames.replace('dark', 'is-dark');
@@ -204,8 +250,9 @@ ws.onmessage = function(event) {
 function sendMessage(event) {
   var bg = $('input.bg:checked').val();
   var width = $('input.width:checked').val();
+  var colors = $('input.colors:checked').val();
 
-  ws.send(JSON.stringify({"background": bg, "width": width}))
+  ws.send(JSON.stringify({"background": bg, "width": width, colors: colors}))
 }
 
 

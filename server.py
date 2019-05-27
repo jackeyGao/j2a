@@ -2,6 +2,7 @@ import os
 import json
 import responder
 import logging
+import hashlib
 import subprocess
 import shlex
 import time
@@ -21,6 +22,22 @@ __author__ = "JG (之及)"
 
 def toStr(byte, errors="ignore"):
     return byte.decode('utf-8', errors=errors)
+
+
+def content_process(output):
+    if not output.startswith('<?xml'):
+        return output
+        
+    for line in output.split('\n'):
+        if not line.startswith('<span'):
+            continue
+
+        if not line.endswith('</pre>'):
+            continue
+
+        return line.replace('</pre>', '')
+
+    return output
 
 
 def run_command(command, timeout=10):
@@ -83,8 +100,8 @@ async def websocket(ws):
 
             if 'bytes' in message:
                 _content = message['bytes']
-
-                filename = uuid.uuid4().hex
+                
+                filename = hashlib.md5(_content).hexdigest()
 
                 with open(f'{filename}.jpeg', 'wb') as f:
                     f.write(_content)
@@ -122,12 +139,23 @@ async def websocket(ws):
                 cmd = f'{cmd} --width=' + params["width"]
                 class_names += f' width{params["width"]}'
 
+            if 'colors' in params:
+                if params['colors'] == 'html':
+                    cmd = f'{cmd} --colors --html'
+                    class_names += f' colors'
+
+                if params['colors'] == 'ansi':
+                    cmd = f'{cmd} --colors'
+                    class_names += f' ansi'
+
+
+            print(cmd)
             rc, out, err = run_command(cmd)
 
             if rc == 0:
                 await ws.send_json({
                     'status': True,
-                    "output": out,
+                    "output": content_process(out),
                     "class": class_names
                 })
             else:
