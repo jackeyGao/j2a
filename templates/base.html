@@ -29,6 +29,13 @@
     .nes-octocat::before {
         color: #f77702;
     }
+
+    .logo {
+        text-align: center;
+    }
+    .logo img {
+        width: 200px;
+    }
      @keyframes wave {
   50% {
     width: 6px;
@@ -68,6 +75,9 @@
   </head>
   <body>
     <div class="ui container">
+        <div class="logo">
+            <img src="/static/logo.png">
+        </div>
       {% block content %}
       {% endblock %}
 
