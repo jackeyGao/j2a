@@ -169,7 +169,6 @@
     </button>
     <button id="copy-button" type="button" class="nes-btn copy-btn is-success" data-clipboard-text="">Copy</button>
   </div>
- 
 </div>
 
 <dialog class="nes-dialog is-dark" id="dialog-copy">
@@ -181,13 +180,16 @@
     </p>
     <p>Copy successfully.</p>
     <button id="close" class="nes-btn is-primary">Close</button>
+
   </form>
 </dialog>
 
 <div style="text-align: center; margin-top: 30px;">
     <button id="show-image" type="button" class="nes-btn {% if filename %}{% else %}hidden{% endif %} is-warning">Show JPEG</button>
     <button id="hidden-image" type="button" class="nes-btn hidden is-warning">Hidden JPEG</button>
+    <a href="/{{filename}}" id="share" type="button" class="nes-btn  {% if filename %}{% else %}hidden{% endif %} is-warning" >Share</a>
 </div>
+
 
 <div id="image-wrapper" class="nes-container hidden is-rounded with-title" style="margin-top: 30px; text-align: center;">
   <p class="title">Image</p>
@@ -234,6 +236,8 @@ ws.onmessage = function(event) {
     if ('filename' in data) {
         filename = data.filename;
         $('#image').attr('src', '/static/images/' + filename + '.jpeg')
+        $('#share').attr('href', '/' + filename)
+        $('#share').removeClass('hidden');
         $('#show-image').removeClass('hidden');
         $('#hidden-image').addClass('hidden');
         $('#image-wrapper').addClass('hidden');
