@@ -27,10 +27,6 @@ p {
 }
 */
 
-.logo img {
-  height: 120px;
-}
-
 
 .upload {
   padding: 8px 16px;
@@ -66,12 +62,4 @@ p {
     display: block;
   }
 
-  .logo {
-    font-size: 2em;
-    font-weight: bold;
-  }
-
-  .logo img {
-    height: 100px;
-  }
 }

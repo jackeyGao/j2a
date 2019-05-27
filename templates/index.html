@@ -108,20 +108,6 @@
 
 
 {% block content %}
-<section class="icon-list" style="margin-bottom: 20px">
-    <!-- Copyright Nintendo -->
-    <i class="nes-mario"></i>
-    <i class="nes-ash"></i>
-    <i class="nes-pokeball"></i>
-    <i class="nes-bulbasaur"></i>
-    <i class="nes-charmander"></i>
-    <i class="nes-squirtle"></i>
-    <i class="nes-kirby"></i>
-    <!--
-    <a href="https://github.com/jackeyGao/j2a"><i class="nes-octocat animate"></i></a>
-    -->
-</section>
-
 <div class="nes-container is-rounded with-title" style="padding: 16px 8px;">
   <p class="title">Form</p>
   <div class="ui form">
@@ -210,7 +196,8 @@
 {% block footer %}
 <script>
 var wsScheme = window.location.protocol == "https:" ? "wss" : "ws";
-var ws = new WebSocket(wsScheme + "://"+location.host+"/ws");
+var ws = new ReconnectingWebSocket(wsScheme + "://"+location.host+"/ws");
+var filename;
 
 ws.onmessage = function(event) {
     var data = JSON.parse(event.data);
@@ -221,12 +208,14 @@ ws.onmessage = function(event) {
       $('#upload-button').addClass('is-primary');
     }
 
-    console.log(data)
-
     var ansi_up = new AnsiUp;
     var classNames = data.class || '';
     var output = data.output
     var outputText = data.output
+
+    if ('filename' in data) {
+        filename = data.filename || null;
+    }
 
     if (classNames.includes('ansi')) {
         output = ansi_up.ansi_to_html(data.output)
@@ -252,7 +241,7 @@ function sendMessage(event) {
   var width = $('input.width:checked').val();
   var colors = $('input.colors:checked').val();
 
-  ws.send(JSON.stringify({"background": bg, "width": width, colors: colors}))
+  ws.send(JSON.stringify({"background": bg, "width": width, colors: colors, filename: filename}))
 }
 
 

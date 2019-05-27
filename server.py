@@ -109,13 +109,14 @@ async def websocket(ws):
                 await ws.send_json({
                     'type': 'upload',
                     'status': True,
+                    'filename': filename,
                     "output": "Upload successfully!"
                 })
                 continue
 
-            
             params = json.loads(message['text'])
             class_names = ""
+            filename = params['filename'] or filename
 
             if not jp2a:
                 rc, cmd, err = run_command('which jp2a') 
@@ -149,7 +150,6 @@ async def websocket(ws):
                     class_names += f' ansi'
 
 
-            print(cmd)
             rc, out, err = run_command(cmd)
 
             if rc == 0:
