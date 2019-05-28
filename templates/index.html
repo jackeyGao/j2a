@@ -45,7 +45,8 @@
     }
 
     label.header {
-      color: #f77702;
+      color: #212529;
+      font-weight: bold;
       max-width: 250px;
       width: 40%;
       text-align: right;
@@ -60,6 +61,11 @@
       font-size: 16px;
       overflow: auto;
       line-height: 1.8;
+    }
+
+    .nes-container.is-warning {
+      color: #212529;
+      background-color: #f7d51d;
     }
 
     #output.light {
@@ -108,12 +114,21 @@
 
 
 {% block content %}
+{% if filename %}
+<div class="nes-container is-warning" style="padding: 16px 8px; margin-bottom: 30px; text-align: center;" >
+  {% if exists %}
+  :) <br> The file has been uploaded, shared or copied to share with your friends.
+  {% else %}
+  :( <br> File not found or removed, Please back to home.
+  {% endif %}
+</div>
+{% endif %}
 <div class="nes-container is-rounded with-title" style="padding: 16px 8px;">
   <p class="title">Form</p>
   <div class="ui form">
     <div class="field">
       <label for="jpg" class="header">JPEG</label>
-      <button id="uploadJPEGHandle" class="nes-btn" style="margin-right: 16px; margin-left: 10px;">
+      <button id="uploadJPEGHandle" class="nes-btn {% if filename and not exists %}is-disabled{% endif %}" style="margin-right: 16px; margin-left: 10px;">
           {% if filename %}image.jpeg{% else %}Choose{% endif %}
       </button>
       <input id="jpg" name="jpg" type="file" style="display: none">
@@ -163,11 +178,16 @@
   </div>
 
   <div class="">
-    <button id="upload-button" type="button" class="nes-btn {% if filename%}is-primary{% else %}is-disabled{% endif %}">
+    <button id="upload-button" type="button" class="nes-btn {% if filename and exists %}is-warning{% else %}is-disabled{% endif %}">
         <i class="nes-icon coin" style="width: 0; height: 0; transform: scale(1);"></i> 
         <span class="process">Process</span>
     </button>
+    {% if filename and not exists %}
+    <a href='/' id="copy-button" type="button" class="nes-btn copy-btn is-warning" data-clipboard-text="">Home</a>
+    {% else %}
     <button id="copy-button" type="button" class="nes-btn copy-btn is-success" data-clipboard-text="">Copy</button>
+    {% endif %}
+    
   </div>
 </div>
 
@@ -185,9 +205,9 @@
 </dialog>
 
 <div style="text-align: center; margin-top: 30px;">
-    <button id="show-image" type="button" class="nes-btn {% if filename %}{% else %}hidden{% endif %} is-warning">Show JPEG</button>
+    <button id="show-image" type="button" class="nes-btn {% if filename and exists %}{% else %}hidden{% endif %} is-warning">Show JPEG</button>
     <button id="hidden-image" type="button" class="nes-btn hidden is-warning">Hidden JPEG</button>
-    <a href="/{{filename}}" id="share" type="button" class="nes-btn  {% if filename %}{% else %}hidden{% endif %} is-warning" >Share</a>
+    <a href="/{{filename}}" id="share" type="button" class="nes-btn  {% if filename and exists %}{% else %}hidden{% endif %} is-warning" >Share</a>
 </div>
 
 
@@ -212,7 +232,7 @@ var ws = new ReconnectingWebSocket(wsScheme + "://"+location.host+"/ws");
 var filename;
 
 ws.onopen = function (event) {
-  {% if filename %}
+  {% if filename and exists %}
   // share page
   filename = '{{ filename }}';
   sendMessage()
@@ -225,13 +245,14 @@ ws.onmessage = function(event) {
     if (data.type === 'upload') {
       // Upload complate;
       $('#upload-button').removeClass('is-disabled');
-      $('#upload-button').addClass('is-primary');
+      $('#upload-button').addClass('is-warning');
     }
 
     var ansi_up = new AnsiUp;
     var classNames = data.class || '';
     var output = data.output
     var outputText = data.output
+
 
     if ('filename' in data) {
         filename = data.filename;
@@ -241,6 +262,7 @@ ws.onmessage = function(event) {
         $('#show-image').removeClass('hidden');
         $('#hidden-image').addClass('hidden');
         $('#image-wrapper').addClass('hidden');
+        $('#uploadJPEGHandle').html('image.jpeg');
     }
 
     if (classNames.includes('ansi')) {
@@ -252,6 +274,7 @@ ws.onmessage = function(event) {
     }
 
     $('#upload-button .process').html("Process")
+    $('#upload-button').removeClass("is-disabled");
     $('#output').html(output);
     $('#copy-result').val(output);
 
@@ -297,6 +320,7 @@ $(document).ready(function() {
 
   $('#upload-button').on('click', function () {
     $('#upload-button .process').html("Processing..")
+    $('#upload-button').addClass("is-disabled");
     sendMessage()
   })
 
@@ -318,6 +342,11 @@ $(document).ready(function() {
 
 
   $('.removefile').on('click', function (e) {
+    {% if filename %}
+    window.location = '/'
+    return
+    {% endif %}
+
     $('#uploadJPEGHandle').html('Choose')
     $('.removefile').addClass('hidden')
     $('#jpg').val('');
@@ -327,9 +356,6 @@ $(document).ready(function() {
   })
 
   $('#jpg').on('change', function (e) {
-    var fileName = e.target.files[0].name;
-    var fileName = 'image.' + fileName.split('.')[1];
-    $('#uploadJPEGHandle').html(fileName)
     $('.removefile').removeClass('hidden');
 
     // upload file 
@@ -338,7 +364,7 @@ $(document).ready(function() {
         $('#output').html("File too large( >2m ).")
         return 
     }
-    $('#upload-button .process').html("Uploading..")
+    $('#uploadJPEGHandle').html("Uploading..")
     ws.send(file)
 
   })

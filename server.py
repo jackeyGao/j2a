@@ -143,6 +143,10 @@ async def index(req, resp):
 
 @api.route('/{filename}')
 async def share(req, resp, *, filename):
+    exists = False
+    if os.path.exists(f'./static/images/{filename}.jpeg'):
+        exists = True    
+
     resp.html = api.template('index.html', **locals())
 
 
