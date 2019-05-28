@@ -98,11 +98,11 @@ def jp2a(filename, params):
     if 'colors' in params:
         if params['colors'] == 'html':
             cmd = f'{cmd} --colors --html'
-            class_names += f' colors'
+            class_names += f' colors html'
 
         if params['colors'] == 'ansi':
             cmd = f'{cmd} --colors'
-            class_names += f' ansi'
+            class_names += f' colors ansi'
 
 
     rc, out, err = run_command(cmd)
