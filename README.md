@@ -5,6 +5,15 @@
 
 j2a is a JPEG to ascii tool based web, [Preview](http://jp2a.herokuapp.com) .
 
+## Based
+
+- [responder](https://github.com/kennethreitz/responder) , A familiar HTTP Service Framework for Python. 
+- [jp2a](https://github.com/cslarsen/jp2a) , Converts jpg images to ASCII.
+- [NES.css](https://github.com/nostalgic-css/NES.css) , NES-style CSS Framework | ファミコン風CSSフレームワーク
+- [reconnecting-websocket](https://github.com/joewalnes/reconnecting-websocket) , A small decorator for the JavaScript WebSocket API that automatically reconnects
+- [dialog-polyfill](https://github.com/GoogleChrome/dialog-polyfill) , Polyfill for the HTML dialog element
+- [ansi.js](https://github.com/jackeyGao/j2a/blob/master/static/ansi.js) , ANSI code to html
+
 
 ## Example 
 
