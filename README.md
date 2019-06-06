@@ -1,5 +1,5 @@
 <p align="center">
-<a target="_blank" rel="noopener noreferrer" href=""><img src="https://raw.githubusercontent.com/jackeyGao/j2a/master/static/j2a-logo.png" alt="" style="max-width:100%;"></a>
+<a target="_blank" rel="noopener noreferrer" href=""><img src="https://repository-images.githubusercontent.com/188507801/fc367a00-8884-11e9-83d5-de8042d3e7cb" alt="" style="max-width:100%;"></a>
 
 </p>
 
