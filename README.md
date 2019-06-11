@@ -12,7 +12,7 @@ j2a is a JPEG to ascii tool based web, [Preview](http://jp2a.herokuapp.com) .
 - [NES.css](https://github.com/nostalgic-css/NES.css) , NES-style CSS Framework | ファミコン風CSSフレームワーク
 - [reconnecting-websocket](https://github.com/joewalnes/reconnecting-websocket) , A small decorator for the JavaScript WebSocket API that automatically reconnects
 - [dialog-polyfill](https://github.com/GoogleChrome/dialog-polyfill) , Polyfill for the HTML dialog element
-- [ansi.js](https://github.com/jackeyGao/j2a/blob/master/static/ansi.js) , ANSI code to html
+- [ansi.js](http://github.com/drudru/ansi_up) , A javascript library that converts text with ANSI terminal codes into colorful HTML
 
 
 ## Example 
